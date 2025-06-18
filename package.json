@@ -14,9 +14,11 @@
     "test:watch": "jest --watch --runInBand",
     "prepare": "husky",
     "start": "ts-node src/index.ts",
-    "migration:create": "typeorm-ts-node-commonjs migration:create",
-    "migration:run": "typeorm-ts-node-commonjs migration:run",
-    "migration:generate": "typeorm-ts-node-commonjs migration:generate "
+    "migration:create": "typeorm-ts-node-commonjs migration:create src/migrations/Migration",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/data-source.ts",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate src/migrations/Migration -d src/config/data-source.ts",
+    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/data-source.ts",
+    "migration:show": "typeorm-ts-node-commonjs migration:show -d src/config/data-source.ts"
   },
   "author": "vighnesh p",
   "license": "ISC",
@@ -47,6 +49,7 @@
     "express": "^5.1.0",
     "pg": "^8.16.0",
     "reflect-metadata": "^0.2.2",
+    "ts-node": "^10.9.2",
     "typeorm": "^0.3.24",
     "winston": "^3.17.0"
   }
