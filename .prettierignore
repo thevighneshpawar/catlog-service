@@ -1,5 +1,5 @@
 # Ignore artifacts:
-dist
+build
 coverage
 tsconfig.json
 package.json
