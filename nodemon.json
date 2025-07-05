@@ -1,0 +1,15 @@
+{
+    "watch": [
+        "src"
+    ],
+    "ext": "ts,js,json",
+    "ignore": [
+        "node_modules",
+        "dist",
+        "*.test.ts"
+    ],
+    "delay": 1000,
+    "signal": "SIGTERM",
+    "verbose": true,
+    "restartable": "rs"
+}
