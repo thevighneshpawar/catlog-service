@@ -1,9 +1,7 @@
 {
-    "watch": [
-        "src"
-    ],
-    "ext": "ts,json",
-    "exec": "ts-node src/server.ts",
-    "signal": "SIGUSR2",
-    "delay": "1000"
+  "watch": ["src"],
+  "ext": "ts,json",
+  "exec": "ts-node src/server.ts",
+  "signal": "SIGUSR2",
+  "delay": "1000"
 }
