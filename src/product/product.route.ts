@@ -7,18 +7,31 @@ import { ProductController } from './product.controller';
 import productValidator from './product.validator';
 import { ProductService } from './productService';
 import fileUpload from 'express-fileupload';
+import { Cloudinary } from '../common/services/cloudinary';
+import createHttpError from 'http-errors';
 
 const router = express.Router();
 
 const productService = new ProductService();
+const cloudinary = new Cloudinary();
 
-const productController = new ProductController(productService);
+const productController = new ProductController(productService, cloudinary);
 
 router.post(
   '/',
   authenticate,
   canAccess([Roles.ADMIN, Roles.MANAGER]),
-  fileUpload(),
+  fileUpload({
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB limit
+    abortOnLimit: true,
+    limitHandler: (req, res, next) => {
+      const error = createHttpError(
+        413,
+        'File size limit exceeded. Maximum allowed size is 10 MB.',
+      );
+      next(error);
+    },
+  }),
   productValidator,
   asyncWrapper(productController.create),
 );

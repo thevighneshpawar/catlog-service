@@ -4,9 +4,15 @@ import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { ProductService } from './productService';
 import { ProductRequest } from './product.types';
+import { FileStorage } from '../common/types/storage';
+import { v4 as uuidv4 } from 'uuid';
+import { UploadedFile } from 'express-fileupload';
 
 export class ProductController {
-  constructor(private productService: ProductService) {}
+  constructor(
+    private productService: ProductService,
+    private storage: FileStorage,
+  ) {}
 
   create = async (
     req: Request & { body: ProductRequest },
@@ -18,6 +24,14 @@ export class ProductController {
     if (!result.isEmpty()) {
       return next(createHttpError(400, result.array()[0].msg as string));
     }
+
+    const image = req.files!.image as UploadedFile;
+    const imageName = uuidv4();
+
+    await this.storage.upload({
+      filename: imageName,
+      fileData: image.data.buffer,
+    });
 
     const {
       name,
