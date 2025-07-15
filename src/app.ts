@@ -3,6 +3,7 @@ import { globalErrorHandler } from './common/middlewares/globalErrorHandler';
 import CategoryRouter from './category/category.route';
 import cookieParser from 'cookie-parser';
 import productRouter from './product/product.route';
+import toppingRouter from './toppings/topping.route';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/categories', CategoryRouter);
 app.use('/products', productRouter);
+app.use('/toppings', toppingRouter);
 
 // it will handle all sync errors
 //to handle async errors we have wrapper in common/utils

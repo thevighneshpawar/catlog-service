@@ -29,27 +29,32 @@ export class Cloudinary implements FileStorage {
     this.client.config(cloudinaryConfig);
   }
 
-  async upload(data: FileData): Promise<void> {
-    // Convert ArrayBuffer to Stream for Cloudinary upload
-    const buffer = Buffer.from(data.fileData);
-    const stream = Readable.from(buffer);
+  async upload(data: FileData): Promise<string> {
+    return new Promise((resolve, reject) => {
+      // Convert ArrayBuffer to Stream for Cloudinary upload
+      const buffer = Buffer.from(data.fileData);
+      const stream = Readable.from(buffer);
 
-    // Wrap the upload_stream in a Promise to handle async properly
+      const uploadStream = this.client.uploader.upload_stream(
+        {
+          resource_type: 'auto', // automatically detect the file type
+          public_id: data.filename,
+          overwrite: false, // prevent accidental overwrites
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result ? result.secure_url : '');
+          }
+        },
+      );
 
-    const uploadStream = this.client.uploader.upload_stream({
-      resource_type: 'auto', // automatically detect the file type
-      public_id: data.filename,
-      overwrite: false, // prevent accidental overwrites
+      stream.pipe(uploadStream);
     });
-
-    stream.pipe(uploadStream);
   }
 
-  //   delete(filename: string): Promise<void> {
-  //     throw new Error('Method not implemented.');
-  //   }
-
-  //   getObjectUri(filename: string): string {
-  //     throw new Error('Method not implemented.');
-  //   }
+  async delete(filename: string): Promise<void> {
+    await this.client.uploader.destroy(filename);
+  }
 }

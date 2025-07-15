@@ -1,22 +1,21 @@
 import express from 'express';
-import { asyncWrapper } from '../common/utils/wrapper';
 import authenticate from '../common/middlewares/authenticate';
 import { canAccess } from '../common/middlewares/canAccess';
 import { Roles } from '../common/constants';
-import { ProductController } from './product.controller';
-import productValidator from './product.validator';
-import { ProductService } from './productService';
-import fileUpload from 'express-fileupload';
+import toppingCreateValidator from './topping-create.validator';
+import { ToppingController } from './topping.controller';
+import { ToppingService } from './toppingService';
 import { Cloudinary } from '../common/services/cloudinary';
+import fileUpload from 'express-fileupload';
 import createHttpError from 'http-errors';
-import updateProductValidator from './update-product.validator';
+import { asyncWrapper } from '../common/utils/wrapper';
 
 const router = express.Router();
 
-const productService = new ProductService();
+const toppingService = new ToppingService();
 const cloudinary = new Cloudinary();
 
-const productController = new ProductController(productService, cloudinary);
+const toppingController = new ToppingController(toppingService, cloudinary);
 
 router.post(
   '/',
@@ -33,35 +32,38 @@ router.post(
       next(error);
     },
   }),
-  productValidator,
-  asyncWrapper(productController.create),
+  toppingCreateValidator,
+  asyncWrapper(toppingController.create),
 );
-
 router.put(
-  '/:productId',
+  '/:toppingId',
   authenticate,
   canAccess([Roles.ADMIN, Roles.MANAGER]),
   fileUpload({
-    limits: { fileSize: 500 * 1024 }, // 500kb
+    limits: { fileSize: 500 * 1024 }, // 0.5 MB limit
     abortOnLimit: true,
     limitHandler: (req, res, next) => {
-      const error = createHttpError(400, 'File size exceeds the limit');
+      const error = createHttpError(
+        413,
+        'File size limit exceeded. Maximum allowed size is 10 MB.',
+      );
       next(error);
     },
   }),
-  updateProductValidator,
-  asyncWrapper(productController.update),
+  toppingCreateValidator,
+  asyncWrapper(toppingController.update),
 );
 
 router.delete(
-  '/:productId',
+  '/:toppingId',
   authenticate,
   canAccess([Roles.ADMIN, Roles.MANAGER]),
-  asyncWrapper(productController.delete),
+  toppingCreateValidator,
+  asyncWrapper(toppingController.delete),
 );
 
-router.get('/', asyncWrapper(productController.index));
+router.get('/:toppingId', asyncWrapper(toppingController.getOne));
 
-router.get('/:productId', asyncWrapper(productController.getOne));
+router.get('/', asyncWrapper(toppingController.getAll));
 
 export default router;
