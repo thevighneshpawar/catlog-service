@@ -10,11 +10,16 @@ import { UploadedFile } from 'express-fileupload';
 import { AuthRequest } from '../common/types';
 import { Roles } from '../common/constants';
 import mongoose from 'mongoose';
+import config from 'config';
+
+import { MessageProducerBroker } from '../common/types/broker';
+import { mapToObject } from '../utils';
 
 export class ProductController {
   constructor(
     private productService: ProductService,
     private storage: FileStorage,
+    private broker: MessageProducerBroker,
   ) {}
 
   create = async (
@@ -59,6 +64,18 @@ export class ProductController {
 
     const newProduct = await this.productService.createProduct(product);
 
+    //send kafka to kafka
+
+    await this.broker.sendMessage(
+      config.get('kafka.topic'),
+      JSON.stringify({
+        id: newProduct._id,
+        // todo: fix the typescript error
+        priceConfiguration: mapToObject(
+          newProduct.priceConfiguration as unknown as Map<unknown, unknown>,
+        ),
+      }),
+    );
     res.json({ id: newProduct._id });
   };
 
@@ -131,7 +148,21 @@ export class ProductController {
       image: imageUrl ? imageUrl : (oldImage as string),
     };
 
-    await this.productService.updateProduct(productId, productToUpdate);
+    const newProduct = await this.productService.updateProduct(
+      productId,
+      productToUpdate,
+    );
+
+    await this.broker.sendMessage(
+      config.get('kafka.topic'),
+      JSON.stringify({
+        id: newProduct._id,
+        // todo: fix the typescript error
+        priceConfiguration: mapToObject(
+          newProduct.priceConfiguration as unknown as Map<unknown, unknown>,
+        ),
+      }),
+    );
 
     res.json({ id: productId });
   };

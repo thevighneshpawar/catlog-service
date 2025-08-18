@@ -10,13 +10,19 @@ import fileUpload from 'express-fileupload';
 import { Cloudinary } from '../common/services/cloudinary';
 import createHttpError from 'http-errors';
 import updateProductValidator from './update-product.validator';
+import { createMessageProducerBroker } from '../common/factories/brokerFactory';
 
 const router = express.Router();
 
 const productService = new ProductService();
 const cloudinary = new Cloudinary();
+const broker = createMessageProducerBroker();
 
-const productController = new ProductController(productService, cloudinary);
+const productController = new ProductController(
+  productService,
+  cloudinary,
+  broker,
+);
 
 router.post(
   '/',
