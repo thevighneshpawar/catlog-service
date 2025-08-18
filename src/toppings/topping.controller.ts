@@ -10,11 +10,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { AuthRequest } from '../common/types';
 import { Roles } from '../common/constants';
 import mongoose from 'mongoose';
+import { MessageProducerBroker } from '../common/types/broker';
 
 export class ToppingController {
   constructor(
     private toppingService: ToppingService,
     private storage: FileStorage,
+    private broker: MessageProducerBroker,
   ) {}
 
   create = async (
@@ -47,6 +49,15 @@ export class ToppingController {
     };
 
     const newTopping = await this.toppingService.createTopping(toppping);
+
+    await this.broker.sendMessage(
+      'topping',
+      JSON.stringify({
+        id: newTopping._id,
+        // todo: fix the typescript error
+        price: newTopping.price,
+      }),
+    );
 
     res.json({ id: newTopping._id });
   };
@@ -111,8 +122,19 @@ export class ToppingController {
       image: imageUrl ? imageUrl : (oldImage as string),
     };
 
-    await this.toppingService.updateTopping(toppingId, toppingToUpdate);
+    const updatedTopping = await this.toppingService.updateTopping(
+      toppingId,
+      toppingToUpdate,
+    );
 
+    await this.broker.sendMessage(
+      'topping',
+      JSON.stringify({
+        id: updatedTopping._id,
+        // todo: fix the typescript error
+        price: updatedTopping.price,
+      }),
+    );
     res.json({ id: toppingId });
   };
 

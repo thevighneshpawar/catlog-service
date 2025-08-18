@@ -9,13 +9,19 @@ import { Cloudinary } from '../common/services/cloudinary';
 import fileUpload from 'express-fileupload';
 import createHttpError from 'http-errors';
 import { asyncWrapper } from '../common/utils/wrapper';
+import { createMessageProducerBroker } from '../common/factories/brokerFactory';
 
 const router = express.Router();
 
 const toppingService = new ToppingService();
 const cloudinary = new Cloudinary();
+const broker = createMessageProducerBroker();
 
-const toppingController = new ToppingController(toppingService, cloudinary);
+const toppingController = new ToppingController(
+  toppingService,
+  cloudinary,
+  broker,
+);
 
 router.post(
   '/',
