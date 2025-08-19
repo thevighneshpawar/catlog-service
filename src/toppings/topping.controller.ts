@@ -56,6 +56,7 @@ export class ToppingController {
         id: newTopping._id,
         // todo: fix the typescript error
         price: newTopping.price,
+        tenantId: newTopping.tenantId,
       }),
     );
 
@@ -133,6 +134,7 @@ export class ToppingController {
         id: updatedTopping._id,
         // todo: fix the typescript error
         price: updatedTopping.price,
+        tenantId: updatedTopping.tenantId,
       }),
     );
     res.json({ id: toppingId });
