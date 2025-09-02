@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { Request } from 'express-jwt';
-import { Filter, ToppingRequest } from './topping.types';
+import { Filter, ToppingEvents, ToppingRequest } from './topping.types';
 import { ToppingService } from './toppingService';
 import { FileStorage } from '../common/types/storage';
 import { validationResult } from 'express-validator';
@@ -53,6 +53,7 @@ export class ToppingController {
     await this.broker.sendMessage(
       'topping',
       JSON.stringify({
+        event_type: ToppingEvents.TOPPING_CREATE,
         id: newTopping._id,
         // todo: fix the typescript error
         price: newTopping.price,
