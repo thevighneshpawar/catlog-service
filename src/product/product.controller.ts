@@ -3,7 +3,7 @@ import { Request } from 'express-jwt';
 import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { ProductService } from './productService';
-import { Filter, ProductRequest } from './product.types';
+import { Filter, ProductEvents, ProductRequest } from './product.types';
 import { FileStorage } from '../common/types/storage';
 import { v4 as uuidv4 } from 'uuid';
 import { UploadedFile } from 'express-fileupload';
@@ -69,6 +69,7 @@ export class ProductController {
     await this.broker.sendMessage(
       config.get('kafka.topic'),
       JSON.stringify({
+        event_type: ProductEvents.PRODUCT_CREATE,
         id: newProduct._id,
         // todo: fix the typescript error
         priceConfiguration: mapToObject(
@@ -156,6 +157,7 @@ export class ProductController {
     await this.broker.sendMessage(
       config.get('kafka.topic'),
       JSON.stringify({
+        event_type: ProductEvents.PRODUCT_UPDATE,
         id: newProduct._id,
         // todo: fix the typescript error
         priceConfiguration: mapToObject(
