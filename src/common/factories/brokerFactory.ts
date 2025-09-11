@@ -10,9 +10,10 @@ export const createMessageProducerBroker = (): MessageProducerBroker => {
   // Use a proper logging mechanism instead of console.log
 
   if (!messageProducer) {
-    messageProducer = new KafkaProducerBroker('catalog-service', [
+    messageProducer = new KafkaProducerBroker(
+      'catalog-service',
       config.get('kafka.broker'),
-    ]);
+    );
   }
 
   return messageProducer;

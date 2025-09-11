@@ -24,6 +24,8 @@ export class KafkaProducerBroker implements MessageProducerBroker {
       };
     }
 
+    // console.log(config.get('kafka.broker'));
+
     const kafka = new Kafka(kafkaConfig);
     this.producer = kafka.producer();
   }
