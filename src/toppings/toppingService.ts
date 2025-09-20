@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import toppingModel from './topping.model';
 import { Filter, PaginateQuery, Topping } from './topping.types';
-import { paginationLabels } from '../config/pagination';
+import { paginationLabels } from '../Config/pagination';
 
 export class ToppingService {
   async createTopping(topping: Topping): Promise<Topping> {

@@ -1,6 +1,6 @@
 import { Filter, PaginateQuery, Product } from './product.types';
 import productModel from './product.model';
-import { paginationLabels } from '../config/pagination';
+import { paginationLabels } from '../Config/pagination';
 import mongoose from 'mongoose';
 
 export class ProductService {

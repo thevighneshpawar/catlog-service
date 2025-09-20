@@ -2,7 +2,7 @@ import express from 'express';
 import { CategoryController } from './category.controller';
 import categoryValidator from './categoryValidator';
 import { CategoryService } from './categoryService';
-import logger from '../config/logger';
+import logger from '../Config/logger';
 import { asyncWrapper } from '../common/utils/wrapper';
 import authenticate from '../common/middlewares/authenticate';
 import { canAccess } from '../common/middlewares/canAccess';

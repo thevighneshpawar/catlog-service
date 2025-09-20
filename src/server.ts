@@ -1,7 +1,7 @@
 import config from 'config';
 import app from './app';
-import logger from './config/logger';
-import { initDb } from './config/db';
+import logger from './Config/logger';
+import { initDb } from './Config/db';
 import { MessageProducerBroker } from './common/types/broker';
 import { createMessageProducerBroker } from './common/factories/brokerFactory';
 
